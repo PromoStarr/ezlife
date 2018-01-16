@@ -1,7 +1,7 @@
 #!/bin/bash
-input="/home/steam/scripts/ezlife/data/arma3-modlist.csv"
+input="data/arma3-modlist.csv"
 modlist=""
-
+ARMA3_DIR="/mnt/data/steam/"
 read -p "Steam User: " STEAM_USER
 read -s -p "Steam Pass: " STEAM_PASS
 
@@ -9,7 +9,7 @@ while IFS=',' read -r f1 f2
 do
   modlist="${modlist} +workshop_download_item 107410 $f1 validate"
 done < "$input"
-steamcmd +login ${STEAM_USER} ${STEAM_PASS} +force_install_dir /mnt/data/steam/  ${modlist} +quit
+steamcmd +login ${STEAM_USER} ${STEAM_PASS} +force_install_dir ${ARMA3_DIR}  ${modlist} +quit
 
 # sed all to lower case now pls
 
