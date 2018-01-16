@@ -10,7 +10,7 @@ while IFS=',' read -r f1 f2
 do
   modlist="${modlist} +workshop_download_item 107410 $f1 validate"
 done < "$input"
-steamcmd +login ${STEAM_USER} ${STEAM_PASS} +force_install_dir ${ARMA3_DIR}  ${modlist} +quit
+steamcmd +login "${STEAM_USER}" "${STEAM_PASS}" +force_install_dir ${ARMA3_DIR}  "${modlist}" +quit
 
 # sed all to lower case now pls
 echo "Changing case of all mods (this can take a while)"
