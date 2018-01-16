@@ -12,9 +12,10 @@ Systemctl takes care of the service for us use:
 ``` $ sudo systemctl status/start/stop/restart arma3.service ```
 
 to watch console output use status or 
-``` $ journal -fu arma3.service ```
+``` $ journalctl -fu arma3.service ```
 
 # Mods installs (Script usage)
-This script does the mod installs. 
-
-Script not developed enough to fill in this bit
+- Add new lines to the end of the CSV file, 1st column being workshop ID, 2nd being the @modname that will sit in the arma3 dir
+- Run the script with ` $ ./ezlife/ez-install` if you're in the steam user dir.
+- Reboot the server with ` $ ./sudo systemctl restart arma3.service`
+- Check on the server to make sure the mods have been mounted correctly ` $ journalctl -fu arma3.service`
