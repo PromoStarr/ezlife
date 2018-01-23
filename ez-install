@@ -22,6 +22,7 @@ while IFS=',' read -r f1 f2
 do
   echo "Making symlink between ${MODS_DIR}$f1 to ${ARMA3_DIR}arma3/@$f2"
   ln -s ${MODS_DIR}$f1 ${ARMA3_DIR}arma3/@$f2
+  ln -s ${MODS_DIR}$f1/keys/* ${ARMA3_DIR}arma3/keys/
   mods_enabled="${mods_enabled}@${f2};"
 done < "$input"
 tee ${ARMA3_DIR}arma3/mods.cfg <<<"${mods_enabled}"
