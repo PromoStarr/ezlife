@@ -29,6 +29,7 @@ main() {
 }
 
 display_help() {
+  echo "USAGE: Add mods to csv and run script with no params!"
   echo "OPTIONS"  
   echo "   -d		Download mods"
   echo "   -c		Change case of downloaded mods"
