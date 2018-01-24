@@ -3,26 +3,73 @@ input="data/arma3-modlist.csv"
 modlist=""
 ARMA3_DIR="/mnt/data/steam/"
 MODS_DIR="/mnt/data/steam/SteamApps/workshop/content/107410/"
-read -p "Steam User: " STEAM_USER
-read -s -p "Steam Pass: " STEAM_PASS
 
-while IFS=',' read -r f1 f2
-do
-  modlist="${modlist} +workshop_download_item 107410 $f1 validate"
-done < "$input"
-steamcmd +login "${STEAM_USER}" "${STEAM_PASS}" +force_install_dir ${ARMA3_DIR}  "${modlist}" +quit
+main() {
+  while getopts ":dclh" opt; do
+    case ${opt} in
+      d ) 
+	dl_mods
+	exit 0;;
+      c )
+	change_case
+	exit 0;;
+      l )
+	link_mods
+	exit 0;;
+      h )
+	display_help
+	exit 0;;
+      * )
+	display_help
+	exit 2;;
+    esac
+  done
+  
+  do_all
+}
 
-# sed all to lower case now pls
-echo "Changing case of all mods (this can take a while)"
-find ${MODS_DIR} -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;
+display_help() {
+  echo "OPTIONS"  
+  echo "   -d		Download mods"
+  echo "   -c		Change case of downloaded mods"
+  echo "   -l		Make symlinks between workshop dir and a3 dir"
+  echo "   -h		Display this message" 
+}
 
-mods_enabled=""
-# Loop and make symlinks where possible
-while IFS=',' read -r f1 f2
-do
-  ln -s ${MODS_DIR}$f1 ${ARMA3_DIR}arma3/@$f2
-  KEY_THING="$(find ${MODS_DIR}$f1 -name *.bikey)"
-  ln -s ${KEY_THING} ${ARMA3_DIR}arma3/keys/
-  mods_enabled="${mods_enabled}@${f2};"
-done < "$input"
-tee ${ARMA3_DIR}arma3/mods.cfg <<<"${mods_enabled}"
+do_all() {
+  dl_mods
+  change_case
+  link_mods
+}
+
+dl_mods() {
+  read -p "Steam User: " STEAM_USER
+  read -s -p "Steam Pass: " STEAM_PASS
+
+  while IFS=',' read -r f1 f2
+  do
+    modlist="${modlist} +workshop_download_item 107410 $f1 validate"
+  done < "$input"
+  steamcmd +login "${STEAM_USER}" "${STEAM_PASS}" +force_install_dir ${ARMA3_DIR}  "${modlist}" +quit
+}
+
+change_case() {
+  # sed all to lower case now pls
+  echo "Changing case of all mods (this can take a while)"
+  find ${MODS_DIR} -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;
+}
+
+link_mods() {
+  mods_enabled=""
+  # Loop and make symlinks where possible
+  while IFS=',' read -r f1 f2
+  do
+    ln -s ${MODS_DIR}$f1 ${ARMA3_DIR}arma3/@$f2
+    KEY_THING="$(find ${MODS_DIR}$f1 -name *.bikey)"
+    ln -s ${KEY_THING} ${ARMA3_DIR}arma3/keys/
+    mods_enabled="${mods_enabled}@${f2};"
+  done < "$input"
+  tee ${ARMA3_DIR}arma3/mods.cfg <<<"${mods_enabled}"
+}
+
+main "$@"
